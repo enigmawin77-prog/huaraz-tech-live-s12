@@ -1,0 +1,17 @@
+﻿N°;Categoría;Método;Ruta;Entrada;Código Esperado;Código Obtenido;Resultado;Fecha y Hora;Observación
+1;Catálogo;GET;/api/productos;Ninguna;200;200;CORRECTO;2026-11-04 17:44:55;Retorna arreglo JSON con los 6 productos iniciales sembrados en SQLite
+2;Consulta;GET;/api/productos/7;id = 7;200;200;CORRECTO;2026-11-04 17:44:55;Consulta parametrizada en SQLite retorna producto existente con sus campos
+3;Validación ID;GET;/api/productos/abc;id = 'abc';400;400;CORRECTO;2026-11-04 17:44:55;obtenerId() detecta parámetro no numérico y responde 400 Bad Request
+4;Recurso Inexistente;GET;/api/productos/999999;id = 999999;404;404;CORRECTO;2026-11-04 17:44:55;Consulta a registro no encontrado en SQLite responde 404 Not Found
+5;Seguridad JWT;POST;/api/productos;{"nombre":"Kit de monitoreo ambiental";"precio":120;"stock":3} (Sin token);401;401;CORRECTO;2026-11-04 17:44:56;Middleware proteger() rechaza petición sin token con 401 Unauthorized
+6;Creación;POST;/api/productos;{"nombre":"Kit de monitoreo ambiental";"precio":120;"stock":3} + Token JWT;201;201;CORRECTO;2026-11-04 17:44:56;Producto creado con ID autoincremental, cabecera Location y auditoría CREAR en NeDB
+7;Actualización;PUT;/api/productos/8;{"nombre":"Kit de monitoreo ambiental";"precio":135;"stock":8} + Token JWT;200;200;CORRECTO;2026-11-04 17:44:56;Actualización de campos en SQLite conservando ID original y auditoría ACTUALIZAR en NeDB
+8;Validación Nombre;POST;/api/productos;{"nombre":"";"precio":100;"stock":5} + Token JWT;400;400;CORRECTO;2026-11-04 17:44:57;validar() rechaza nombre menor a 3 caracteres con mensaje explicativo JSON
+9;Validación Precio;POST;/api/productos;{"nombre":"Kit sensor";"precio":-10;"stock":5} + Token JWT;400;400;CORRECTO;2026-11-04 17:44:57;validar() rechaza precio negativo impidiendo datos erróneos en base de datos
+10;Validación Stock;POST;/api/productos;{"nombre":"Kit sensor";"precio":50;"stock":2.5} + Token JWT;400;400;CORRECTO;2026-11-04 17:44:57;validar() exige entero seguro (Number.isSafeInteger) rechazando decimales con 400
+11;Eliminación;DELETE;/api/productos/8;id = 8 + Token JWT instructor;204;204;CORRECTO;2026-11-04 17:44:57;Eliminación física en SQLite, respuesta 204 No Content y auditoría ELIMINAR en NeDB
+12;Verificación DELETE;GET;/api/productos/8;id = 8;404;404;CORRECTO;2026-11-04 17:44:58;Comprobación de que el recurso eliminado ya no existe en la base de datos
+13;CORS Permitido;GET;/api/productos;Origin: http://127.0.0.1:5500 (cliente-cors.html);200;200;CORRECTO;2026-11-04 17:45:48;Servidor responde cabecera Access-Control-Allow-Origin: http://127.0.0.1:5500
+14;CORS Bloqueado;GET;/api/productos;Origin: http://no-permitido.com;403;403;CORRECTO;2026-11-04 17:45:49;Política CORS estricta en base.js rechaza explícitamente con HTTP 403 Forbidden
+15;Auditoría NoSQL;GET;/api/auditoria?accion=CREAR;Token JWT instructor;200;200;CORRECTO;2026-11-04 17:45:41;NeDB devuelve documentos con _id, usuario, fecha y snapshot anidado de producto
+16;Persistencia Docker;GET;/api/productos/9;id = 9 (Producto Docker) tras docker compose restart api;200;200;CORRECTO;2026-11-04 17:45:33;Comprobación de que el volumen datos_taller preserva los datos tras reinicio

@@ -1,0 +1,19 @@
+{
+  "name": "huaraz-tech-live-s12",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Taller SENATI de API RESTful SQL NoSQL JWT CORS y Docker",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "preparar": "node preparar.js",
+    "start": "node --env-file=.env server.js"
+  },
+  "dependencies": {
+    "@seald-io/nedb": "4.1.2",
+    "cors": "2.8.6",
+    "express": "5.3.0",
+    "jsonwebtoken": "9.0.3"
+  }
+}
